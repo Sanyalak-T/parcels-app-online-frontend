@@ -17,9 +17,8 @@ export default function SearchAppBar() {
             <span className='p-2 cursor-pointer'>Users</span>
           </div>
           <div className='flex flex-row items-center'>
-            <Link to="/" className='p-2 cursor-pointer'>Login</Link>
-            <span className='p-2 cursor-pointer'>Logout</span>
-            <span className='p-2 cursor-pointer'>Signup</span>
+            <Link to="/" className='p-2 cursor-pointer'>Logout</Link>
+            <Link to="/changepassword" className='p-2 cursor-pointer'>Change Password</Link>
           </div>
         </nav>
       </header>
