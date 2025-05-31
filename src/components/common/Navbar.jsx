@@ -1,9 +1,16 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { logoutUser } from '../../services/authService';
 
 export default function SearchAppBar() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     //  navigate("/home");
+
+    const handleLogout = async () => {
+      navigate("/");
+      await logoutUser();
+      localStorage.removeItem("token");
+    }
   return (
     <>
       <header className='h-20 w-auto bg-blue-500 font-bold text-white'>
@@ -17,7 +24,7 @@ export default function SearchAppBar() {
             <span className='p-2 cursor-pointer'>Users</span>
           </div>
           <div className='flex flex-row items-center'>
-            <Link to="/" className='p-2 cursor-pointer'>Logout</Link>
+            <button onClick={handleLogout} className='p-2 cursor-pointer'>Logout</button>
             <Link to="/changepassword" className='p-2 cursor-pointer'>Change Password</Link>
           </div>
         </nav>

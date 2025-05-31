@@ -1,15 +1,42 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { useNavigate, Link } from "react-router";
 import '../utils/login.css';
-// import '../utils/login.js';
+import { loginUser } from "../services/authService";
 
 const Login = () => {
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // bg blure
   const blurValue = Math.max(0, 3 - password.length * 2);
+
+    const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const data = await loginUser({email, password});
+
+      // ✅ เก็บ token ใน localStorage
+      if (data.token) {
+      localStorage.setItem("token", data.token);
+}
+      //setUser(data.user); // Save user to AuthContext
+      navigate("/home"); // Redirect after successful login
+    } catch (err) {
+      console.error(err);
+      setError(
+        err?.response?.data?.message || "Login failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen login">
@@ -22,7 +49,13 @@ const Login = () => {
           Login to Your Account
         </h2>
 
-        <form className="space-y-4">
+      {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-center">
+            {error}
+          </div>
+      )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label
               htmlFor="email"
@@ -62,11 +95,11 @@ const Login = () => {
             />
           </div>
 
-          <Link to="home"
+          <button type="submit" disabled={loading}
             className="w-[100%] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
           >
             <div className="w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-semibold py-2 rounded-md transition duration-300">Login!</div>
-          </Link>
+          </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-4">
