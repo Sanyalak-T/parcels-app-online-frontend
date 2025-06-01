@@ -21,11 +21,11 @@ export default function SearchAppBar() {
           <div className='flex flex-row items-center'>
             <span className='p-2 cursor-pointer'>Organization</span>
             <span className='p-2 cursor-pointer'>Parcels</span>
-            <span className='p-2 cursor-pointer'>Users</span>
-          </div>
-          <div className='flex flex-row items-center'>
             <button onClick={handleLogout} className='p-2 cursor-pointer'>Logout</button>
             <Link to="/changepassword" className='p-2 cursor-pointer'>Change Password</Link>
+          </div>
+          <div className='flex flex-row items-center'>
+            <span className='p-2 cursor-pointer'>Users</span>
           </div>
         </nav>
       </header>

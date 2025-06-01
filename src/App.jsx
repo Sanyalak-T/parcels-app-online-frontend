@@ -9,24 +9,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ChangePassword from "./pages/ChangePassword";
 
 export default function App() {
-  // endpoint from mock up API.
-  // const endpoint = "https://67f9f0e3094de2fe6ea2b617.mockapi.io/products";
-
-    // const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // get products from mock data
     const fetchData = async () => {
       try {
         setLoading(true);
-        // const response = await fetch(endpoint);
-        // if (!response.ok) {
-        //   throw new Error("Failed to fetch data");
-        // }
-        // const data = await response.json();
-              // console.log(data);
-        // setProducts(data);
       } catch (error) {
         setError(error.message);
       } finally {

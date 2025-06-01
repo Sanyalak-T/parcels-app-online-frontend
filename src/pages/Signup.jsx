@@ -1,16 +1,26 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import '../utils/login.css';
-// import '../utils/login.js';
+import { signupUser } from "../services/authService";
 
 const Signup = () => {
+  const navigate = useNavigate();
 
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // bg blure
-//   const blurValue = Math.max(0, 3 - password.length * 2);
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try{
+      const data = await signupUser({userName, email, password});
+      console.log(data);
+      navigate("/");
+    } catch(err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen login">
@@ -79,11 +89,11 @@ const Signup = () => {
             />
           </div>
 
-          <Link to="home"
+          <button onClick={handleSubmit} to="home"
             className="w-[100%] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
           >
             <div className="w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-semibold py-2 rounded-md transition duration-300">Signup!</div>
-          </Link>
+          </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-4">
