@@ -69,7 +69,6 @@ const ChangePassword = () => {
 
   return (
     <>
-    <Navbar />
     <div className="h-full flex items-center justify-center login">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md overflow-hidden">
         <h2 className="font-bold text-gray-500 text-center py-2">

@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router";
 import '../utils/login.css';
 import { loginUser } from "../services/authService";
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -24,9 +24,24 @@ const Login = () => {
       // ✅ เก็บ token ใน localStorage
       if (data.token) {
       localStorage.setItem("token", data.token);
-}
-      //setUser(data.user); // Save user to AuthContext
-      navigate("/home"); // Redirect after successful login
+      console.log(data);
+    }
+
+      // ✅ เพิ่มหลังเก็บ token เพื่อโหลดโปรไฟล์ใหม่
+      const res = await fetch("http://localhost:3030/auth/profile", {
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      });
+
+      const profile = await res.json();
+      console.log(profile);
+      if (profile.user) {
+        setUser(profile.user); // ✅ แจ้ง App ว่ามี user ใหม่ login แล้ว
+      }
+
+      navigate("/"); // Redirect after successful login
     } catch (err) {
       console.error(err);
       setError(
