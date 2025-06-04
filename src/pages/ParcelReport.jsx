@@ -4,7 +4,7 @@ import Navbar from "../components/common/Navbar"
 const ParcelReport = () => {
   return (
     <>
-    {/* <Navbar /> */}
+    <Navbar />
     <div>ParcelReport</div>
     </>
   )

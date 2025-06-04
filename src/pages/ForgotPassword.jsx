@@ -10,6 +10,7 @@ const ForgotPassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
    useEffect(() => {
     if (email) {
@@ -37,6 +38,7 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setIsLoading(true);
 
     if (newPassword !== confirmNewPassword) {
@@ -51,7 +53,9 @@ const ForgotPassword = () => {
       navigate("/home");
     } catch (err) {
        "Failed to reset password.", err;
-
+      setError(
+      err?.response?.data?.message || "Reset password failed. Please try again."
+    );
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +71,12 @@ const ForgotPassword = () => {
         </h2>
 
         {passwordMatchError != "" && (<span className="text-red-400">{passwordMatchError}</span>)}
+
+      {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-center">
+            {error}
+          </div>
+      )}
 
         <form className="space-y-4">
           <div>
@@ -129,7 +139,7 @@ const ForgotPassword = () => {
             />
           </div>
 
-          <button onClick={handleSubmit}
+          <button onClick={handleSubmit} disabled={isLoading}
             className="w-[100%] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
           >
             <div className="w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-semibold py-2 rounded-md transition duration-300">{

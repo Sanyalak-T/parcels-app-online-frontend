@@ -14,6 +14,8 @@ const ChangePassword = () => {
     const [showPasswordMismatch, setShowPasswordMismatch] = useState(false);
     const [showCurrentPasswordMismatch, setShowCurrentPasswordMismatch] =
     useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
     const match = newPassword === confirmNewPassword && newPassword !== "";
@@ -38,7 +40,8 @@ const ChangePassword = () => {
 
     const handleSaveChanges = async (e) => {
     e.preventDefault();
-    // setLoading(true);
+    setError("");
+    setLoading(true);
     try {
       // update password
       if (isPasswordMatch) {
@@ -55,20 +58,23 @@ const ChangePassword = () => {
         alert("Password updated successfully!");
         navigate("/home");
       }
-    } catch (error) {
+    } catch (err) {
       if (error.response?.status === 400) {
         setShowCurrentPasswordMismatch(true);
       } else {
-        console.error("Error updating password:", error);
+        console.error("Error updating password:", err);
         alert("An error occurred while updating the password.");
+        setError(err?.response?.data?.message || "Change password failed. Please try again."
+    );
       }
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <>
+    <Navbar />
     <div className="h-full flex items-center justify-center login">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md overflow-hidden">
         <h2 className="font-bold text-gray-500 text-center py-2">
@@ -79,7 +85,13 @@ const ChangePassword = () => {
 
         {showCurrentPasswordMismatch && (<span className="text-red-400">Incorrect current password</span>)}
 
-        <form className="space-y-4">
+        {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-center">
+            {error}
+          </div>
+      )}
+
+        <form onSubmit={handleSaveChanges} className="space-y-4">
           <div>
             <label
               htmlFor="currentPassword"
@@ -141,7 +153,7 @@ const ChangePassword = () => {
             />
           </div>
 
-          <button onClick={handleSaveChanges}
+          <button type="submit" disabled={loading}
             className="w-[100%] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
           >
             <div className="w-full bg-blue-600 hover:bg-blue-700 text-center text-white font-semibold py-2 rounded-md transition duration-300">Save!</div>

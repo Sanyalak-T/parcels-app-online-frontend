@@ -1,47 +1,36 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, Outlet, useLocation } from 'react-router';
-import { logoutUser } from '../../services/authService';
+import { Link } from 'react-router';
+import UserDropdown from '../unique/userDropdown';
 
-export default function Navbar({user, setUser}) {
-  const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
-    // const {usershow} = user;
-    console.log(user);
-    const hideHeaderOn = ["/login"];
-    const showHeader = !hideHeaderOn.includes(location.pathname) && !location.pathname.startsWith("/changepassword/");
-
-      useEffect(() => {
-      }, [user, loading]);
-
-    const handleLogout = async () => {
-      setLoading(true);
-      await logoutUser();
-      localStorage.removeItem("token");
-      setUser(null);
-      navigate("/login");
-    }
-
+export default function Navbar() {
   return (
-    <>
-      {showHeader && (<header className='h-20 w-auto bg-blue-500 font-bold text-white'>
-        <nav className='h-20 w-auto flex flex-row justify-between p-2'>
-          <div className='flex flex-row items-center'>
-            <Link to={"/home"}>📝 Parcels App.</Link>
-          </div>
-          <div className='flex flex-row items-center'>
-            <Link to={"/organization"} className='p-2 cursor-pointer'>Organization</Link>
-            <Link to={"/parcel"} className='p-2 cursor-pointer'>Parcels</Link>
-            <Link to={"/parcel-report"} className='p-2 cursor-pointer'>Parcels Report</Link>
-            <button onClick={handleLogout} className='p-2 cursor-pointer'>Logout</button>
-            <Link to="/changepassword" className='p-2 cursor-pointer'>Change Password</Link>
-          </div>
-          <div className='flex flex-row items-center'>
-            <span className='p-2 cursor-pointer'>Hello, {user?.userName || "Admin"}</span>
-          </div>
-        </nav>
-      </header>)}
-      <Outlet />
-    </>
+    <header className="bg-blue-600 shadow-md">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        {/* Logo / App Name */}
+        <div className="flex items-center space-x-2 text-white text-xl font-semibold">
+          <span className="text-2xl">📝</span>
+          <Link to="/home" className="hover:underline">
+            Parcels App
+          </Link>
+        </div>
+
+        {/* Main Nav Links */}
+        <div className="hidden md:flex items-center space-x-6 text-white text-sm font-medium">
+          <Link to="/organization" className="hover:text-blue-200 transition-colors">
+            Organization
+          </Link>
+          <Link to="/parcel" className="hover:text-blue-200 transition-colors">
+            Parcels
+          </Link>
+          <Link to="/parcel-report" className="hover:text-blue-200 transition-colors">
+            Parcels Report
+          </Link>
+        </div>
+
+        {/* User Dropdown */}
+        <div className="flex items-center">
+          <UserDropdown />
+        </div>
+      </nav>
+    </header>
   );
 }

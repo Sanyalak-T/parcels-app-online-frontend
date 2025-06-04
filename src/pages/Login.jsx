@@ -1,56 +1,48 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import '../utils/login.css';
-import { loginUser } from "../services/authService";
+import { loginUser, getProfile} from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setUser } = useAuth();
 
   // bg blure
-  const blurValue = Math.max(0, 3 - password.length * 2);
+  const blurValue = Math.max(0, 5 - password.length * 2);
 
-    const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const data = await loginUser({email, password});
-      // ✅ เก็บ token ใน localStorage
-      if (data.token) {
-      localStorage.setItem("token", data.token);
-      console.log(data);
-    }
+  try {
+    const data = await loginUser({email, password});
 
-      // ✅ เพิ่มหลังเก็บ token เพื่อโหลดโปรไฟล์ใหม่
-      const res = await fetch("http://localhost:3030/auth/profile", {
-        credentials: "include",
-        headers: {
-          Authorization: `Bearer ${data.token}`,
-        },
-      });
+    if (data.token) {
+    localStorage.setItem("token", data.token);
 
-      const profile = await res.json();
-      console.log(profile);
-      if (profile.user) {
-        setUser(profile.user); // ✅ แจ้ง App ว่ามี user ใหม่ login แล้ว
-      }
+    const profile = await getProfile(); // ดึงจาก authService
+    setUser(profile.user); // ✅ Context จะ trigger render ทั่วแอป
 
-      navigate("/"); // Redirect after successful login
-    } catch (err) {
-      console.error(err);
-      setError(
-        err?.response?.data?.message || "Login failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    navigate("/");
+  }
+
+    navigate("/home"); // Redirect after successful login
+  } catch (err) {
+    console.error(err);
+    setError(
+      err?.response?.data?.message || "Login failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen login">
