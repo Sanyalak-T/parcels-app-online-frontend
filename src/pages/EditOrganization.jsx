@@ -1,39 +1,65 @@
-import React, {useState} from 'react'
-import { Link, useNavigate } from 'react-router'
+import React, {useState, useEffect} from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
 import Navbar from "../components/common/Navbar"
-import { createOrganization }  from '../services/organizationService'
+import { getOrganization, updateOrganization }  from '../services/organizationService'
 
-const CreateOrganization = ({onOrganizationAdded}) => {
-  const [ higherSection, setHigherSection ] = useState("")
-  const [ organizationName, setOrganizationName ] = useState("")
-  const [ departmentName, setDepartmentName ] = useState("")
-  const [ orgRemark, setOrgRemark ] = useState("")
-  const [ loading, setLoading] = useState(false);
-  const [ error, setError] = useState("");
+const EditOrganization = () => {
+  const { id } = useParams()
   const navigate = useNavigate();
 
-  const handleCreateOrganization = async (e) => {
+  const [ formData, setFormData] = useState({
+    higherSection: "",
+    organizationName: "",
+    departmentName: "",
+    orgRemark: "",
+  })
+
+  const [ loading, setLoading] = useState(false);
+  const [ error, setError] = useState("");
+
+    useEffect(() => {
+    const fetchOrganization = async () => {
+      try {
+        setLoading(true);
+        const data = await getOrganization(id); // Fetch the organization by ID
+        const organization = data.organization;
+        setFormData(organization); //setup data from api
+      } catch (err) {
+        console.error("Failed to fetch organization:", err);
+        setError("Failed to load organization details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrganization();
+  }, [id]);
+
+    const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditOrganization = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const newOrganization = await createOrganization({higherSection, organizationName, departmentName, orgRemark});
-      setHigherSection("");
-      setOrganizationName("");
-      setDepartmentName("");
-      setOrgRemark("");
-      if (onOrganizationAdded) onOrganizationAdded(newOrganization);
+      await updateOrganization(id ,formData);
       navigate("/organization");
     } catch (err) {
       console.error(err);
       setError(
-        err?.response?.data?.message || "Create a organization failed. Please try again."
+        err?.response?.data?.message || "Update organization failed. Please try again."
       );
     } finally {
       setLoading(false);
     }
   }
+
+    if (loading)
+    return <div className="text-center mt-10 text-xl">Loading...</div>;
 
   return (
     <>
@@ -42,7 +68,7 @@ const CreateOrganization = ({onOrganizationAdded}) => {
       <nav className="bg-blue-100 border-b border-blue-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-blue-700 text-sm font-medium">
-            <p>Creating New Organization</p>
+            <p>Editing Organization</p>
           </div>
           <Link
             to="/organization"
@@ -61,9 +87,9 @@ const CreateOrganization = ({onOrganizationAdded}) => {
         </div>
       )}
 
-      <form onSubmit={ handleCreateOrganization }
+      <form onSubmit={ handleEditOrganization }
       className="w-full max-w-3xl p-6 bg-white rounded-2xl shadow-md space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800">Organization Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Edit Organization</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -74,8 +100,8 @@ const CreateOrganization = ({onOrganizationAdded}) => {
                       type="text"
                       name="higherSection"
                       id="higherSection"
-                      value={higherSection}
-                      onChange={(e) => setHigherSection(e.target.value) }
+                      value={formData.higherSection}
+                      onChange={handleInputChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="e.g., Ministry of Health"
                   />
@@ -89,8 +115,8 @@ const CreateOrganization = ({onOrganizationAdded}) => {
                       type="text"
                       name="organizationName"
                       id="organizationName"
-                      value={organizationName}
-                      onChange={(e) => setOrganizationName(e.target.value) }
+                      value={formData.organizationName}
+                      onChange={handleInputChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="e.g., Public Health Office"
                   />
@@ -104,8 +130,8 @@ const CreateOrganization = ({onOrganizationAdded}) => {
                       type="text"
                       name="departmentName"
                       id="departmentName"
-                      value={departmentName}
-                      onChange={(e) => setDepartmentName(e.target.value) }
+                      value={formData.departmentName}
+                      onChange={handleInputChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="e.g., HR Department"
                   />
@@ -119,8 +145,8 @@ const CreateOrganization = ({onOrganizationAdded}) => {
                       type="text"
                       name="orgRemark"
                       id="orgRemark"
-                      value={orgRemark}
-                      onChange={(e) => setOrgRemark(e.target.value)}
+                      value={formData.orgRemark}
+                      onChange={handleInputChange}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Optional notes"
                   />
@@ -143,4 +169,4 @@ const CreateOrganization = ({onOrganizationAdded}) => {
   )
 }
 
-export default CreateOrganization
+export default EditOrganization

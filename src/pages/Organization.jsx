@@ -1,27 +1,48 @@
-// import React from 'react'
-// import { Link } from 'react-router'
-// import Navbar from "../components/common/Navbar"
-
-// const Organization = () => {
-//   return (
-//     <>
-//     <Navbar />
-//     <nav className="h-10 w-full bg-blue-400">
-//       <div className='py-1 pl-4 '>
-//         <Link to={"/create-organization"} className='text-white hover:text-black cursor-pointer'>New Organization</Link>
-//       </div>
-//     </nav>
-//     </>
-//   )
-// }
-
-// export default Organization
-
-import React from 'react';
-import { Link } from 'react-router';
+import React, {useEffect, useState} from 'react';
+import { Link, useNavigate } from 'react-router';
 import Navbar from '../components/common/Navbar';
+import { getOrganizations, deleteOrganization } from '../services/organizationService';
 
 const Organization = () => {
+  const [organizations, setOrganizations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const data = await getOrganizations();
+        setOrganizations(data.organizations);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load organizations.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getData();
+  }, []);
+
+  const handleEdit = (id) => {
+  // เปลี่ยนเส้นทางไปหน้า edit โดยใส่ id ใน URL
+  navigate(`/edit-organization/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this organization?")) return;
+  try {
+    await deleteOrganization(id); // เรียก API ลบ
+    // อัปเดตรายการใน state
+    setOrganizations(prev => prev.filter(org => org._id !== id));
+  } catch (err) {
+    console.error("Delete failed", err);
+    alert("Delete failed");
+  }
+};
+
   return (
     <>
       <Navbar />
@@ -40,6 +61,62 @@ const Organization = () => {
           </Link>
         </div>
       </nav>
+
+      <div className="max-w-7xl mx-auto p-4">
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {!loading && organizations.length === 0 && (
+          <p className="text-gray-500">No organizations found.</p>
+        )}
+
+        {!loading && organizations.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 border rounded-lg shadow-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">#</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Higher Section</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Organization Name</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Department Name</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Remark</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Actions</th> 
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {organizations.map((org, index) => (
+                  <tr key={org._id || index}>
+                    <td className="px-4 py-2 text-sm text-gray-800">{index + 1}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">{org.higherSection}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">{org.organizationName}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">{org.departmentName}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">{org.orgRemark}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">
+                    <div className="flex space-x-2">
+                      {/* แก้ไข */}
+                      <button
+                        onClick={() => handleEdit(org._id)}
+                        className="text-blue-600 hover:underline text-sm"
+                      >
+                        Edit
+                      </button>
+
+                      {/* ลบ */}
+                      <button
+                        onClick={() => handleDelete(org._id)}
+                        className="text-red-600 hover:underline text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </>
   );
 };

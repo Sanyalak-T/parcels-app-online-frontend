@@ -34,7 +34,7 @@ const UserDropdown = () => {
     >
       <button
         onClick={() => setToggle((prev) => !prev)}
-        className="px-4 py-2 font-medium text-white">
+        className="px-4 py-2 font-medium text-white cursor-pointer">
         Hello, {user?.userName || "User"}
       </button>
 

@@ -11,10 +11,10 @@ import Organization from "./pages/Organization";
 import Parcel from "./pages/Parcel";
 import ParcelReport from "./pages/ParcelReport";
 
-import Navbar from "./components/common/Navbar";
-import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import CreateOrganization from "./pages/CreateOrganization";
+import CreateParcel from "./pages/CreateParcel";
+import EditOrganization from "./pages/EditOrganization";
 
 export default function App() {
     const [loading, setLoading] = useState(false);
@@ -86,11 +86,17 @@ export default function App() {
             path="/create-organization"
             element={<CreateOrganization />} />
           <Route
+            path="/edit-organization/:id"
+            element={<EditOrganization />} />
+          <Route
             path="/parcel"
             element={
               <Parcel />
             }
           />
+          <Route
+            path="/create-parcel"
+            element={<CreateParcel />} />
           <Route
             path="/parcel-report"
             element={
