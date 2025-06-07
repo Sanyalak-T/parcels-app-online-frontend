@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
-import UserDropdown from '../unique/userDropdown';
+import { Link } from "react-router";
+import UserDropdown from "../unique/userDropdown";
 
 export default function Navbar() {
   return (
@@ -8,20 +8,38 @@ export default function Navbar() {
         {/* Logo / App Name */}
         <div className="flex items-center space-x-2 text-white text-xl font-semibold">
           <span className="text-2xl">📝</span>
-          <Link to="/home" className="hover:underline">
+          <Link
+            to="/home"
+            className="hover:underline"
+          >
             Parcels App
           </Link>
         </div>
 
         {/* Main Nav Links */}
         <div className="hidden md:flex items-center space-x-6 text-white text-sm font-medium">
-          <Link to="/organization" className="hover:text-blue-200 transition-colors">
+          <Link
+            to="/organization"
+            className="hover:text-blue-200 transition-colors"
+          >
             Organization
           </Link>
-          <Link to="/parcel" className="hover:text-blue-200 transition-colors">
+          <Link
+            to="/department"
+            className="hover:text-blue-200 transition-colors"
+          >
+            Department
+          </Link>
+          <Link
+            to="/parcel"
+            className="hover:text-blue-200 transition-colors"
+          >
             Parcels
           </Link>
-          <Link to="/parcel-report" className="hover:text-blue-200 transition-colors">
+          <Link
+            to="/parcel-report"
+            className="hover:text-blue-200 transition-colors"
+          >
             Parcels Report
           </Link>
         </div>
