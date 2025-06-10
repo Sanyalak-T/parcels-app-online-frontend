@@ -5,13 +5,14 @@ import React, {
 import { Link, useNavigate } from "react-router";
 import Navbar from "../components/common/Navbar";
 import {
-  getOrganizations,
-  deleteOrganization,
-} from "../services/organizationService";
+  getDepartments,
+  deleteDepartment,
+} from "../services/departmentService";
 
 const Department = () => {
-  const [organizations, setOrganizations] =
-    useState([]);
+  const [departments, setDepartments] = useState(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -20,8 +21,8 @@ const Department = () => {
     const getData = async () => {
       try {
         setLoading(true);
-        const data = await getOrganizations();
-        setOrganizations(data.organizations);
+        const data = await getDepartments();
+        setDepartments(data.departments);
       } catch (err) {
         console.error(err);
         setError("Failed to load organizations.");
@@ -35,21 +36,21 @@ const Department = () => {
 
   const handleEdit = (id) => {
     // เปลี่ยนเส้นทางไปหน้า edit โดยใส่ id ใน URL
-    navigate(`/edit-organization/${id}`);
+    navigate(`/edit-department/${id}`);
   };
 
   const handleDelete = async (id) => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this organization?"
+        "Are you sure you want to delete this department?"
       )
     )
       return;
     try {
-      await deleteOrganization(id); // เรียก API ลบ
+      await deleteDepartment(id); // เรียก API ลบ
       // อัปเดตรายการใน state
-      setOrganizations((prev) =>
-        prev.filter((org) => org._id !== id)
+      setDepartments((prev) =>
+        prev.filter((dept) => dept._id !== id)
       );
     } catch (err) {
       console.error("Delete failed", err);
@@ -68,7 +69,7 @@ const Department = () => {
             Manage Departments
           </h2>
           <Link
-            to="/create-organization"
+            to="/create-department"
             className="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md shadow hover:bg-blue-600 transition-colors"
           >
             + New Department
@@ -82,26 +83,19 @@ const Department = () => {
           <p className="text-red-500">{error}</p>
         )}
 
-        {!loading &&
-          organizations.length === 0 && (
-            <p className="text-gray-500">
-              No departments found.
-            </p>
-          )}
+        {!loading && departments.length === 0 && (
+          <p className="text-gray-500">
+            No departments found.
+          </p>
+        )}
 
-        {!loading && organizations.length > 0 && (
+        {!loading && departments.length > 0 && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 border rounded-lg shadow-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                     #
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                    Higher Section
-                  </th>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                    Organization Name
                   </th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                     Department Name
@@ -115,30 +109,24 @@ const Department = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {organizations.map(
-                  (org, index) => (
-                    <tr key={org._id || index}>
+                {departments.map(
+                  (dept, index) => (
+                    <tr key={dept._id || index}>
                       <td className="px-4 py-2 text-sm text-gray-800">
                         {index + 1}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-800">
-                        {org.higherSection}
+                        {dept.departmentName}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-800">
-                        {org.organizationName}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-800">
-                        {org.departmentName}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-800">
-                        {org.orgRemark}
+                        {dept.departmentRemark}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-800">
                         <div className="flex space-x-2">
                           {/* แก้ไข */}
                           <button
                             onClick={() =>
-                              handleEdit(org._id)
+                              handleEdit(dept._id)
                             }
                             className="text-blue-600 hover:underline text-sm"
                           >
@@ -149,7 +137,7 @@ const Department = () => {
                           <button
                             onClick={() =>
                               handleDelete(
-                                org._id
+                                dept._id
                               )
                             }
                             className="text-red-600 hover:underline text-sm"
