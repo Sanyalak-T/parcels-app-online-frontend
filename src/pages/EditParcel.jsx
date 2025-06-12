@@ -1,66 +1,92 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import React, {
+  useState,
+  useEffect,
+} from "react";
+import {
+  Link,
+  useNavigate,
+  useParams,
+} from "react-router";
 import Navbar from "../components/common/Navbar";
-import { createParcel } from "../services/parcelService";
+import {
+  getParcel,
+  updateParcel,
+} from "../services/parcelService";
 
-const CreateParcel = ({ onParcelOnAdded }) => {
-  const [arrivalDate, setArrivalDate] =
-    useState("");
-  const [numberOrCode, setNumberOrCode] =
-    useState("");
-  const [parcelType, setParcelType] =
-    useState("");
-  const [parcelName, setParcelName] =
-    useState("");
-  const [
-    brandTypeModelSizeDescrip,
-    setBrandTypeModelSizeDescrip,
-  ] = useState("");
-  const [unitPrice, setUnitPrice] = useState("");
-  const [howToGet, setHowToGet] = useState("");
-  const [parcelRemark, setParcelRemark] =
-    useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+const EditParcel = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const handleCreateParcel = async (e) => {
+  const [formData, setFormData] = useState({
+    arrivalDate: "",
+    numberOrCode: "",
+    parcelType: "",
+    parcelName: "",
+    brandTypeModelSizeDescrip: "",
+    unitPrice: "",
+    howToGet: "",
+    parcelRemark: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchParcel = async () => {
+      try {
+        setLoading(true);
+        const data = await getParcel(id); // Fetch the department by ID
+        const parcel = data.parcel;
+        setFormData(parcel); //setup data from api
+      } catch (err) {
+        console.error(
+          "Failed to fetch parcel",
+          err
+        );
+        setError(
+          "Failed to load parcel details."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchParcel();
+  }, [id]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleEditParcel = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const newParcel = await createParcel({
-        arrivalDate,
-        numberOrCode,
-        parcelType,
-        parcelName,
-        brandTypeModelSizeDescrip,
-        unitPrice,
-        howToGet,
-        parcelRemark,
-      });
-      setArrivalDate("");
-      setNumberOrCode("");
-      setParcelType("");
-      setParcelName("");
-      setBrandTypeModelSizeDescrip("");
-      setUnitPrice("");
-      setHowToGet("");
-      setParcelRemark("");
-      if (onParcelOnAdded)
-        onParcelOnAdded(newParcel);
+      await updateParcel(id, formData);
       navigate("/parcel");
     } catch (err) {
       console.error(err);
       setError(
         err?.response?.data?.message ||
-          "Create a parcel failed. Please try again."
+          "Update parcel failed. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading)
+    return (
+      <div className="text-center mt-10 text-xl">
+        Loading...
+      </div>
+    );
 
   return (
     <>
@@ -69,13 +95,13 @@ const CreateParcel = ({ onParcelOnAdded }) => {
       <nav className="bg-blue-100 border-b border-blue-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-blue-700 text-sm font-medium">
-            <p>Creating New Percel</p>
+            <p>Editing Parcel</p>
           </div>
           <Link
             to="/parcel"
             className="text-blue-600 hover:underline text-sm"
           >
-            &larr; Back to Percel List
+            &larr; Back to Parcel List
           </Link>
         </div>
       </nav>
@@ -88,11 +114,11 @@ const CreateParcel = ({ onParcelOnAdded }) => {
         )}
 
         <form
-          onSubmit={handleCreateParcel}
+          onSubmit={handleEditParcel}
           className="w-full max-w-3xl p-6 bg-white rounded-2xl shadow-md space-y-6"
         >
           <h2 className="text-xl font-semibold text-gray-800">
-            Parcel Information
+            Edit Parcel
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -104,14 +130,19 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 Arrival Date
               </label>
               <input
-                type="date"
+                type="text"
                 name="arrivalDate"
                 id="arrivalDate"
-                value={arrivalDate}
-                onChange={(e) =>
-                  setArrivalDate(e.target.value)
-                }
+                value={new Date(
+                  formData.arrivalDate
+                ).toLocaleDateString("th-TH", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -120,18 +151,16 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 htmlFor="numberOrCode"
                 className="block text-sm font-medium text-gray-700"
               >
-                Number or Code
+                Number/Code
               </label>
               <input
                 type="text"
                 name="numberOrCode"
                 id="numberOrCode"
-                value={numberOrCode}
-                onChange={(e) =>
-                  setNumberOrCode(e.target.value)
-                }
+                value={formData.numberOrCode}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., A-001"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -142,27 +171,15 @@ const CreateParcel = ({ onParcelOnAdded }) => {
               >
                 Parcel Type
               </label>
-              <select
-                type="select"
+              <input
+                type="text"
                 name="parcelType"
                 id="parcelType"
-                value={parcelType}
-                onChange={(e) =>
-                  setParcelType(e.target.value)
-                }
+                value={formData.parcelType}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., Material type"
-              >
-                <option value="">
-                  --Select Type--
-                </option>
-                <option value="material type">
-                  Material Type
-                </option>
-                <option value="equipment type">
-                  Equipment Type
-                </option>
-              </select>
+                placeholder="e.g., HR Department"
+              />
             </div>
 
             <div>
@@ -176,12 +193,10 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 type="text"
                 name="parcelName"
                 id="parcelName"
-                value={parcelName}
-                onChange={(e) =>
-                  setParcelName(e.target.value)
-                }
+                value={formData.parcelName}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., Computer Name"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -190,20 +205,18 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 htmlFor="brandTypeModelSizeDescrip"
                 className="block text-sm font-medium text-gray-700"
               >
-                Brand, Tpye...
+                Brand...
               </label>
               <input
                 type="text"
                 name="brandTypeModelSizeDescrip"
                 id="brandTypeModelSizeDescrip"
-                value={brandTypeModelSizeDescrip}
-                onChange={(e) =>
-                  setBrandTypeModelSizeDescrip(
-                    e.target.value
-                  )
+                value={
+                  formData.brandTypeModelSizeDescrip
                 }
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., Lenovo"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -212,18 +225,16 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 htmlFor="unitPrice"
                 className="block text-sm font-medium text-gray-700"
               >
-                Unit Price (฿)
+                Unit Price
               </label>
               <input
                 type="text"
                 name="unitPrice"
                 id="unitPrice"
-                value={unitPrice}
-                onChange={(e) =>
-                  setUnitPrice(e.target.value)
-                }
+                value={formData.unitPrice}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., 15000"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -232,18 +243,16 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 htmlFor="howToGet"
                 className="block text-sm font-medium text-gray-700"
               >
-                How to Get
+                How To Get
               </label>
               <input
                 type="text"
                 name="howToGet"
                 id="howToGet"
-                value={howToGet}
-                onChange={(e) =>
-                  setHowToGet(e.target.value)
-                }
+                value={formData.howToGet}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., Money Support 2024"
+                placeholder="e.g., HR Department"
               />
             </div>
 
@@ -252,16 +261,14 @@ const CreateParcel = ({ onParcelOnAdded }) => {
                 htmlFor="parcelRemark"
                 className="block text-sm font-medium text-gray-700"
               >
-                Remark
+                Parcel Remark
               </label>
               <input
                 type="text"
                 name="parcelRemark"
                 id="parcelRemark"
-                value={parcelRemark}
-                onChange={(e) =>
-                  setParcelRemark(e.target.value)
-                }
+                value={formData.parcelRemark}
+                onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 placeholder="Optional notes"
               />
@@ -274,7 +281,8 @@ const CreateParcel = ({ onParcelOnAdded }) => {
               disabled={loading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
+              {/* Save */}
             </button>
           </div>
         </form>
@@ -283,4 +291,4 @@ const CreateParcel = ({ onParcelOnAdded }) => {
   );
 };
 
-export default CreateParcel;
+export default EditParcel;

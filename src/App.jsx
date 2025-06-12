@@ -28,6 +28,7 @@ import EditOrganization from "./pages/EditOrganization";
 import Department from "./pages/Department";
 import CreateDepartment from "./pages/CreateDepartment";
 import EditDepartment from "./pages/EditDepartment";
+import EditParcel from "./pages/EditParcel";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -124,6 +125,10 @@ export default function App() {
           <Route
             path="/create-parcel"
             element={<CreateParcel />}
+          />
+          <Route
+            path="/edit-parcel/:id"
+            element={<EditParcel />}
           />
           <Route
             path="/parcel-report"

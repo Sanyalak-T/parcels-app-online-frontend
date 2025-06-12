@@ -4,7 +4,10 @@ import React, {
 } from "react";
 import { Link, useNavigate } from "react-router";
 import Navbar from "../components/common/Navbar";
-import { getParcels } from "../services/parcelService";
+import {
+  getParcels,
+  deleteParcel,
+} from "../services/parcelService";
 
 const Parcel = () => {
   const [parcels, setParcels] = useState([]);
@@ -28,6 +31,29 @@ const Parcel = () => {
 
     getData();
   }, []);
+
+  const handleEdit = (id) => {
+    navigate(`/edit-parcel/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this parcel?"
+      )
+    )
+      return;
+    try {
+      await deleteParcel(id); // เรียก API ลบ
+      // อัปเดตรายการใน state
+      setParcels((prev) =>
+        prev.filter((parcel) => parcel._id !== id)
+      );
+    } catch (err) {
+      console.error("Delete parcelled", err);
+      alert("Delete faile");
+    }
+  };
 
   return (
     <>
@@ -103,7 +129,6 @@ const Parcel = () => {
                       {index + 1}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-800">
-                      {/* {parcel.arrivalDate.toDateString()} */}
                       {new Date(
                         parcel.arrivalDate
                       ).toLocaleDateString(
