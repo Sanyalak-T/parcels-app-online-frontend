@@ -46,3 +46,13 @@ export const deleteParcel = async (parcelId) => {
   );
   return response.data;
 };
+
+// filter parcels
+export const filterParcels = async (filters) => {
+  const response = await api.get(
+    "/filter-parcels",
+    { params: filters }
+  );
+  console.log(response.data);
+  return response.data;
+};
