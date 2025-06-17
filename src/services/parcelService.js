@@ -48,10 +48,19 @@ export const deleteParcel = async (parcelId) => {
 };
 
 // filter parcels
-export const filterParcels = async (filters) => {
+export const filterParcels = async (
+  filters,
+  pageNum = 1
+) => {
   const response = await api.get(
     "/filter-parcels",
-    { params: filters }
+    {
+      params: {
+        ...filters,
+        page: pageNum,
+        limit: 3,
+      },
+    }
   );
   console.log(response.data);
   return response.data;

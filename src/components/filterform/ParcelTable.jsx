@@ -37,9 +37,6 @@ const ParcelTable = ({ parcels }) => {
             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
               Parcel Remark
             </th>
-            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-              Actions
-            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
