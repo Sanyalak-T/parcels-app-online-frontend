@@ -12,11 +12,16 @@ export const createParcel = async (
 };
 
 // get parcels
-export const getParcels = async () => {
-  const response = await api.get(
-    "/get-all-parcel"
+export const getParcels = async (params = {}) => {
+  const query = new URLSearchParams(
+    params
+  ).toString();
+  console.log(query);
+  const { data } = await api.get(
+    `/get-all-parcel?${query}`
   );
-  return response.data;
+  console.log(data);
+  return data;
 };
 
 // get a parcel
@@ -62,6 +67,5 @@ export const filterParcels = async (
       },
     }
   );
-  console.log(response.data);
   return response.data;
 };

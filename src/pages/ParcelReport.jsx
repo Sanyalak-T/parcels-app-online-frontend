@@ -6,7 +6,7 @@ import { Link } from "react-router";
 import Navbar from "../components/common/Navbar";
 import { filterParcels } from "../services/parcelService";
 import ParcelFilterForm from "../components/filterform/ParcelFilterForm";
-import ParcelTable from "../components/filterform/parcelTable";
+import ParcelTable from "../components/filterform/ParcelTable";
 
 const ParcelReport = () => {
   const [parcels, setParcels] = useState([]);
@@ -28,7 +28,6 @@ const ParcelReport = () => {
         filtersArg,
         pageNum
       );
-      console.log(results);
       setParcels(results.data);
       setPage(results.page);
       setPages(results.pages);

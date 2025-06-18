@@ -1,12 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-const ParcelFilterForm = ({ onFilter }) => {
+const ParcelSearchForm = ({ onFilter }) => {
   const initialFilters = {
     parcelName: "",
-    parcelType: "",
-    startDate: "",
-    endDate: "",
   };
   const [filters, setFilters] = useState(
     initialFilters
@@ -25,16 +22,10 @@ const ParcelFilterForm = ({ onFilter }) => {
     e.preventDefault();
 
     // ✅ ตรวจสอบว่าผู้ใช้กรอกอย่างน้อย 1 ฟิลด์
-    const hasInput =
-      filters.parcelName ||
-      filters.parcelType ||
-      filters.startDate ||
-      filters.endDate;
+    const hasInput = filters.parcelName;
 
     if (!hasInput) {
-      setError(
-        "Please select at least one filter"
-      );
+      setError("Please search parcel name");
 
       // ตั้งเวลา 3 วินาที ให้ข้อความหายไป
       setTimeout(() => {
@@ -53,7 +44,7 @@ const ParcelFilterForm = ({ onFilter }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-2"
+      className="space-y-2 mb-2"
     >
       <input
         type="text"
@@ -63,40 +54,6 @@ const ParcelFilterForm = ({ onFilter }) => {
         onChange={handleChange}
         className="border p-2 rounded w-full"
       />
-
-      <select
-        type="select"
-        name="parcelType"
-        id="parcelType"
-        value={filters.parcelType}
-        onChange={handleChange}
-        className="border p-2 rounded w-full"
-      >
-        <option value="">--Select Type--</option>
-        <option value="material type">
-          Material Type
-        </option>
-        <option value="equipment type">
-          Equipment Type
-        </option>
-      </select>
-
-      <div className="flex space-x-2">
-        <input
-          type="date"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          type="date"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-      </div>
 
       {/* ✅ แสดงข้อความแจ้งเตือนถ้ามี */}
       {error && (
@@ -113,4 +70,4 @@ const ParcelFilterForm = ({ onFilter }) => {
   );
 };
 
-export default ParcelFilterForm;
+export default ParcelSearchForm;

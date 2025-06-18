@@ -1,7 +1,6 @@
 import React from "react";
 
 const ParcelTable = ({ parcels }) => {
-  console.log(parcels);
   if (!parcels.length)
     return <p>No results found.</p>;
 

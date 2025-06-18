@@ -8,27 +8,50 @@ import {
   getParcels,
   deleteParcel,
 } from "../services/parcelService";
+import ParcelSearchForm from "../components/filterform/ParcelSearchForm";
 
 const Parcel = () => {
   const [parcels, setParcels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [hasSearched, setHasSearched] =
+    useState(false); //เพิ่ม state เพื่อตรวจว่ามีการค้นหาแล้วหรือยัง
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [filters, setFilters] = useState({});
+
+  const getData = async (
+    filters = {},
+    page = 1,
+    limit = 2
+  ) => {
+    try {
+      setLoading(true);
+      const data = await getParcels({
+        ...filters,
+        page,
+        limit,
+      });
+      setParcels(data.parcels);
+      setPages(data.pagination.totalPages || 1);
+      setPage(page);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load parcels");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🟦 เพิ่มฟังก์ชัน search handler
+  const handleSearch = (filters) => {
+    setFilters(filters);
+    setHasSearched(true);
+    getData(filters, 1);
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setLoading(true);
-        const data = await getParcels();
-        setParcels(data.parcels);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load parcels");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     getData();
   }, []);
 
@@ -74,6 +97,11 @@ const Parcel = () => {
       </nav>
 
       <div className="max-w-7xl mx-auto p-4">
+        {/* search part */}
+        <ParcelSearchForm
+          onFilter={handleSearch}
+        />
+
         {loading && <p>Loading...</p>}
         {error && (
           <p className="text-red-500">{error}</p>
@@ -194,6 +222,30 @@ const Parcel = () => {
             </table>
           </div>
         )}
+
+        <div className="flex justify-center mt-4 space-x-2">
+          <button
+            disabled={page === 1}
+            onClick={() =>
+              getData(filters, page - 1)
+            }
+            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="px-3 py-1">
+            {page} / {pages}
+          </span>
+          <button
+            disabled={page === pages}
+            onClick={() =>
+              getData(filters, page + 1)
+            }
+            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </>
   );
