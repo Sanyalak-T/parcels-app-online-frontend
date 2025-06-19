@@ -8,6 +8,9 @@ import { filterParcels } from "../services/parcelService";
 import ParcelFilterForm from "../components/filterform/ParcelFilterForm";
 import ParcelTable from "../components/filterform/ParcelTable";
 
+import { generateParcelsReport } from "../utils/pdfService";
+import api from "../services/api";
+
 const ParcelReport = () => {
   const [parcels, setParcels] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,6 +46,10 @@ const ParcelReport = () => {
     fetchParcels(newFilters, 1); // ✅ Reset to first page on new search
   };
 
+  const handleGeneratePDF = () => {
+    generateParcelsReport(parcels);
+  };
+
   // เอาออกเพราะว่า ไม่ต้องการให้ดึงข้อมูลทันที
   // useEffect(() => {
   //   fetchParcels();
@@ -57,12 +64,12 @@ const ParcelReport = () => {
           <h2 className="text-blue-700 font-semibold text-sm sm:text-base">
             Manage Parcel Report
           </h2>
-          <Link
-            to="/create-parcel"
+          <button
+            onClick={handleGeneratePDF}
             className="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md shadow hover:bg-blue-600 transition-colors"
           >
-            + Parcel Report
-          </Link>
+            &#8613; Parcel Report
+          </button>
         </div>
       </nav>
 

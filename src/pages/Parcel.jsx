@@ -24,7 +24,7 @@ const Parcel = () => {
   const getData = async (
     filters = {},
     page = 1,
-    limit = 2
+    limit = 20
   ) => {
     try {
       setLoading(true);

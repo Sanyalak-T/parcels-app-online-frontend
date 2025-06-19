@@ -16,11 +16,9 @@ export const getParcels = async (params = {}) => {
   const query = new URLSearchParams(
     params
   ).toString();
-  console.log(query);
   const { data } = await api.get(
     `/get-all-parcel?${query}`
   );
-  console.log(data);
   return data;
 };
 
@@ -63,7 +61,7 @@ export const filterParcels = async (
       params: {
         ...filters,
         page: pageNum,
-        limit: 3,
+        limit: 20,
       },
     }
   );
