@@ -200,7 +200,7 @@ export const generateParcelsReport = (
     //   },
     // },
     defaultStyle: {
-      font: "THSarabunNew",
+      font: "Roboto",
       fontSize: 14,
     }, // ใช้ default font หรือ custom ได้
   };
