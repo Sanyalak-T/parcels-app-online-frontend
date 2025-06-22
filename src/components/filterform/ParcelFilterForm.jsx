@@ -1,10 +1,13 @@
-import React from "react";
 import { useState, useEffect } from "react";
+import { useParcelFilter } from "../../context/ParcelFilterContext";
 
 const ParcelFilterForm = ({ onFilter }) => {
+  // get parcel type and name to show on report
+  const { updateFilter } = useParcelFilter(); // Get the update function from context
+
   const initialFilters = {
-    parcelName: "",
     parcelType: "",
+    parcelName: "",
     startDate: "",
     endDate: "",
   };
@@ -26,8 +29,8 @@ const ParcelFilterForm = ({ onFilter }) => {
 
     // ✅ ตรวจสอบว่าผู้ใช้กรอกอย่างน้อย 1 ฟิลด์
     const hasInput =
-      filters.parcelName ||
       filters.parcelType ||
+      filters.parcelName ||
       filters.startDate ||
       filters.endDate;
 
@@ -43,6 +46,12 @@ const ParcelFilterForm = ({ onFilter }) => {
 
       return;
     }
+
+    // Use the updateFilter function to update the global state
+    updateFilter({
+      parcelType: filters.parcelType,
+      parcelName: filters.parcelName,
+    });
 
     onFilter(filters);
 

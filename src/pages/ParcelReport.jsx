@@ -1,15 +1,14 @@
-import React, {
-  useState,
-  useEffect,
-} from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/common/Navbar";
 import { filterParcels } from "../services/parcelService";
 import ParcelFilterForm from "../components/filterform/ParcelFilterForm";
 import ParcelTable from "../components/filterform/ParcelTable";
+import { useAuth } from "../context/AuthContext";
+import useOrgInfo from "../utils/useOrgInfo";
+import { useParcelFilter } from "../context/ParcelFilterContext";
 
 // import { generateParcelsReport } from "../utils/pdfService";
 import { generateParcelsReport } from "../utils/pdfThaiService";
-import api from "../services/api";
 
 const ParcelReport = () => {
   const [parcels, setParcels] = useState([]);
@@ -19,6 +18,18 @@ const ParcelReport = () => {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [filters, setFilters] = useState({});
+
+  //get parcel name and parcel type to show on report
+  const { filterCriteria } = useParcelFilter(); // Get the filter criteria from context
+  const { parcelType, parcelName } =
+    filterCriteria;
+
+  // call custom hook to get orgainization infos
+  const { orgName, higherSectionName } =
+    useOrgInfo();
+
+  // get user login to show on report
+  const { user, setUser } = useAuth();
 
   const fetchParcels = async (
     filtersArg = filters,
@@ -47,13 +58,15 @@ const ParcelReport = () => {
   };
 
   const handleGeneratePDF = () => {
-    generateParcelsReport(parcels);
+    generateParcelsReport(
+      parcels,
+      user,
+      orgName,
+      higherSectionName,
+      parcelType,
+      parcelName
+    );
   };
-
-  // เอาออกเพราะว่า ไม่ต้องการให้ดึงข้อมูลทันที
-  // useEffect(() => {
-  //   fetchParcels();
-  // }, []);
 
   return (
     <>

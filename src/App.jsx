@@ -22,6 +22,7 @@ import Parcel from "./pages/Parcel";
 import ParcelReport from "./pages/ParcelReport";
 
 import { AuthProvider } from "./context/AuthContext";
+import { ParcelFilterProvider } from "./context/ParcelFilterContext";
 import CreateOrganization from "./pages/CreateOrganization";
 import CreateParcel from "./pages/CreateParcel";
 import EditOrganization from "./pages/EditOrganization";
@@ -76,69 +77,71 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route
-            path="/home"
-            element={<Home />}
-          />
-          <Route
-            path="/signup"
-            element={<Signup />}
-          />
-          <Route
-            path="/forgotpassword"
-            element={<ForgotPassword />}
-          />
-          <Route
-            path="/changepassword"
-            element={<ChangePassword />}
-          />
-          <Route
-            path="/organization"
-            element={<Organization />}
-          />
-          <Route
-            path="/create-organization"
-            element={<CreateOrganization />}
-          />
-          <Route
-            path="/edit-organization/:id"
-            element={<EditOrganization />}
-          />
-          <Route
-            path="/department"
-            element={<Department />}
-          />
-          <Route
-            path="/create-department"
-            element={<CreateDepartment />}
-          />
-          <Route
-            path="/edit-department/:id"
-            element={<EditDepartment />}
-          />
-          <Route
-            path="/parcel"
-            element={<Parcel />}
-          />
-          <Route
-            path="/create-parcel"
-            element={<CreateParcel />}
-          />
-          <Route
-            path="/edit-parcel/:id"
-            element={<EditParcel />}
-          />
-          <Route
-            path="/parcel-report"
-            element={<ParcelReport />}
-          />
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
-        </Routes>
+        <ParcelFilterProvider>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route
+              path="/home"
+              element={<Home />}
+            />
+            <Route
+              path="/signup"
+              element={<Signup />}
+            />
+            <Route
+              path="/forgotpassword"
+              element={<ForgotPassword />}
+            />
+            <Route
+              path="/changepassword"
+              element={<ChangePassword />}
+            />
+            <Route
+              path="/organization"
+              element={<Organization />}
+            />
+            <Route
+              path="/create-organization"
+              element={<CreateOrganization />}
+            />
+            <Route
+              path="/edit-organization/:id"
+              element={<EditOrganization />}
+            />
+            <Route
+              path="/department"
+              element={<Department />}
+            />
+            <Route
+              path="/create-department"
+              element={<CreateDepartment />}
+            />
+            <Route
+              path="/edit-department/:id"
+              element={<EditDepartment />}
+            />
+            <Route
+              path="/parcel"
+              element={<Parcel />}
+            />
+            <Route
+              path="/create-parcel"
+              element={<CreateParcel />}
+            />
+            <Route
+              path="/edit-parcel/:id"
+              element={<EditParcel />}
+            />
+            <Route
+              path="/parcel-report"
+              element={<ParcelReport />}
+            />
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+          </Routes>
+        </ParcelFilterProvider>
       </AuthProvider>
     </BrowserRouter>
   );

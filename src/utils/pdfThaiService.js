@@ -20,13 +20,27 @@ pdfMake.fonts = {
 };
 
 export const generateParcelsReport = async (
-  parcels
+  parcels,
+  user,
+  orgName,
+  higherSectionName,
+  parcelType,
+  parcelName
 ) => {
   console.log(parcels);
-  const partGovernment = "สสอ.ชัยบุรี";
-  const organizationName = "รพ.สต.ไทรทอง";
-  const parcelType = "วัสดุสำนักงาน";
-  const parcelName = "คอมพิวเตอร์";
+  console.log(user);
+  console.log(orgName);
+  console.log(higherSectionName);
+  console.log(parcelType);
+  console.log(parcelName);
+
+  // get user login to show on report
+  const userReport = user.userName;
+
+  const partGovernment = `${higherSectionName}`;
+  const organizationName = `${orgName}`;
+  const parcelTypeOnReport = `${parcelType}`;
+  const parcelNameOnReport = `${parcelName}`;
 
   const tableHeader = [
     {
@@ -145,7 +159,7 @@ export const generateParcelsReport = async (
             margin: [10, 10, 0, 0],
           },
           {
-            text: "createb by Admin",
+            text: `createb by ${userReport}`,
             alignment: "right",
             margin: [0, 10, 10, 0],
           },
@@ -167,8 +181,8 @@ export const generateParcelsReport = async (
             [
               `ส่วนราชการ: ${partGovernment}`,
               `หน่วยงาน: ${organizationName}`,
-              `ประเภท: ${parcelType}`,
-              `ชื่อ/ชนิด: ${parcelName}`,
+              `ประเภท: ${parcelTypeOnReport}`,
+              `ชื่อ/ชนิด: ${parcelNameOnReport}`,
             ],
           ],
         },
