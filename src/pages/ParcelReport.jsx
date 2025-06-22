@@ -2,13 +2,13 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { Link } from "react-router";
 import Navbar from "../components/common/Navbar";
 import { filterParcels } from "../services/parcelService";
 import ParcelFilterForm from "../components/filterform/ParcelFilterForm";
 import ParcelTable from "../components/filterform/ParcelTable";
 
-import { generateParcelsReport } from "../utils/pdfService";
+// import { generateParcelsReport } from "../utils/pdfService";
+import { generateParcelsReport } from "../utils/pdfThaiService";
 import api from "../services/api";
 
 const ParcelReport = () => {
