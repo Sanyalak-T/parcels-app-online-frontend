@@ -27,13 +27,6 @@ export const generateParcelsReport = async (
   parcelType,
   parcelName
 ) => {
-  console.log(parcels);
-  console.log(user);
-  console.log(orgName);
-  console.log(higherSectionName);
-  console.log(parcelType);
-  console.log(parcelName);
-
   // get user login to show on report
   const userReport = user.userName;
 
