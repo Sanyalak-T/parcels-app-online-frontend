@@ -161,7 +161,7 @@ const EditParcel = () => {
                 Arrival Date
               </label>
               <input
-                type="text"
+                type="date"
                 name="arrivalDate"
                 id="arrivalDate"
                 value={formData.arrivalDate}
