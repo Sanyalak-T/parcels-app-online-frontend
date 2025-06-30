@@ -17,6 +17,13 @@ const EditParcel = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // กำหนดรายการ Parcel Type ทั้งหมดที่เป็นไปได้
+  // ควรจะตรงกับ enum ใน Mongoose Schema ของคุณ
+  const ALL_PARCEL_TYPES = [
+    "material type",
+    "equipment type",
+  ];
+
   const [formData, setFormData] = useState({
     arrivalDate: "",
     numberOrCode: "",
@@ -38,6 +45,24 @@ const EditParcel = () => {
         const data = await getParcel(id); // Fetch the department by ID
         const parcel = data.parcel;
         setFormData(parcel); //setup data from api
+
+        // ตรวจสอบว่า parcelType เป็น Array หรือไม่
+        // ใน Mongoose Schema คุณกำหนดเป็น `type: [String]` ซึ่งหมายถึง Array of Strings
+        const currentParcelType = Array.isArray(
+          parcel.parcelType
+        )
+          ? parcel.parcelType[0] || "" // เลือกค่าแรก ถ้ามี หรือเป็น String ว่าง
+          : parcel.parcelType || ""; // ถ้าไม่ใช่ Array ให้ใช้ค่าที่ได้มาตรงๆ
+
+        setFormData({
+          ...parcel,
+          arrivalDate: parcel.arrivalDate
+            ? new Date(parcel.arrivalDate)
+                .toISOString()
+                .split("T")[0]
+            : "", // ฟอร์แมตวันที่ให้ถูกต้องสำหรับ input type="date"
+          parcelType: currentParcelType,
+        });
       } catch (err) {
         console.error(
           "Failed to fetch parcel",
@@ -68,7 +93,13 @@ const EditParcel = () => {
     setLoading(true);
 
     try {
-      await updateParcel(id, formData);
+      // ในที่นี้จะสมมติว่าคุณจะส่งกลับไปเป็น Array ที่มีค่าเดียว เพื่อให้เข้ากับ Schema ปัจจุบัน
+      const payloadToSend = {
+        ...formData,
+        parcelType: [formData.parcelType], // แปลงเป็น Array เพื่อให้ตรงกับ Mongoose Schema
+      };
+
+      await updateParcel(id, payloadToSend);
       navigate("/parcel");
     } catch (err) {
       console.error(err);
@@ -133,13 +164,7 @@ const EditParcel = () => {
                 type="text"
                 name="arrivalDate"
                 id="arrivalDate"
-                value={new Date(
-                  formData.arrivalDate
-                ).toLocaleDateString("th-TH", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+                value={formData.arrivalDate}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 placeholder="e.g., HR Department"
@@ -171,15 +196,27 @@ const EditParcel = () => {
               >
                 Parcel Type
               </label>
-              <input
-                type="text"
+              <select
                 name="parcelType"
                 id="parcelType"
                 value={formData.parcelType}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="e.g., HR Department"
-              />
+              >
+                <option value="">
+                  -- Select Type --
+                </option>
+                {ALL_PARCEL_TYPES.map(
+                  (type, index) => (
+                    <option
+                      key={index}
+                      value={type}
+                    >
+                      {type}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             <div>
