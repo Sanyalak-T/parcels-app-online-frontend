@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParcelFilter } from "../../context/ParcelFilterContext";
 
-const ParcelFilterForm = ({ onFilter }) => {
+const ParcelFilterForm = ({
+  onFilter,
+  onClear,
+}) => {
   // get parcel type and name to show on report
   const { updateFilter } = useParcelFilter(); // Get the update function from context
 
@@ -15,6 +18,16 @@ const ParcelFilterForm = ({ onFilter }) => {
     initialFilters
   );
   const [error, setError] = useState(""); // สำหรับข้อความแจ้งเตือน
+
+  const handleClear = () => {
+    setFilters(initialFilters);
+    setError(""); // ล้าง error ถ้ามี
+    updateFilter(initialFilters); // เคลียร์ context filter
+    //onClear(); // แจ้งไปยัง parent ให้ล้างตาราง
+    if (onClear) {
+      onClear(); // ✅ เรียก clear จาก parent
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,6 +130,13 @@ const ParcelFilterForm = ({ onFilter }) => {
         className="bg-blue-500 text-white p-2 rounded w-full"
       >
         Search
+      </button>
+      <button
+        type="button"
+        onClick={handleClear}
+        className="bg-gray-400 text-white p-2 rounded w-full"
+      >
+        Clear
       </button>
     </form>
   );

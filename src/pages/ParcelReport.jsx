@@ -52,9 +52,10 @@ const ParcelReport = () => {
     }
   };
 
-  const handleFilter = (newFilters) => {
-    setFilters(newFilters);
-    fetchParcels(newFilters, 1); // ✅ Reset to first page on new search
+  const handleClearFilters = () => {
+    setFilters({});
+    setParcels([]);
+    setHasSearched(false);
   };
 
   const handleGeneratePDF = () => {
@@ -89,6 +90,7 @@ const ParcelReport = () => {
       <div className="p-4 space-y-4">
         <ParcelFilterForm
           onFilter={fetchParcels}
+          onClear={handleClearFilters}
         />
 
         {loading && <p>Loading...</p>}
